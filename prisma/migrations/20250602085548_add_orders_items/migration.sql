@@ -1,0 +1,42 @@
+-- CreateTable
+CREATE TABLE `User` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `role` ENUM('PICKER', 'FORWARDER', 'SHIPPER', 'COURIER', 'RECEIVER') NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `User_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Order` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `buyerName` VARCHAR(191) NOT NULL,
+    `buyerEmail` VARCHAR(191) NOT NULL,
+    `deliveryAddress` VARCHAR(191) NOT NULL,
+    `status` ENUM('CREATED', 'PICKED', 'TRANSIT_TO_SZ', 'TRANSIT_TO_SG', 'CUSTOMS_CLEARED', 'POD') NOT NULL DEFAULT 'CREATED',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Item` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `productName` VARCHAR(191) NOT NULL,
+    `quantity` INTEGER NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `orderId` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Item` ADD CONSTRAINT `Item_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

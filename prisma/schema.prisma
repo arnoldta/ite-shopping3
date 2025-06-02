@@ -27,3 +27,40 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum OrderStatus {
+  CREATED
+  PICKED
+  TRANSIT_TO_SZ
+  TRANSIT_TO_SG
+  CUSTOMS_CLEARED
+  POD
+}
+
+model Order {
+  id               Int          @id @default(autoincrement())
+  buyerName        String
+  buyerEmail       String
+  deliveryAddress  String
+  status           OrderStatus  @default(CREATED)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  /// 4) One-to-many relation: an Order has many Items
+  items            Item[]
+}
+
+/// 5) New Item model
+model Item {
+  id           Int     @id @default(autoincrement())
+  productName  String
+  quantity     Int
+  price        Float
+
+  /// 6) Foreign key pointing back to its Order
+  orderId      Int
+  order        Order   @relation(fields: [orderId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
