@@ -52,7 +52,7 @@ export const authOptions: AuthOptions = {
     // Redirect users to their role-based route after login
     async redirect({ url, baseUrl, token }) {
       if (token && token.role) {
-        return `${baseUrl}/${token.role}`;
+        return `${baseUrl}/roles/${token.role}`;
       }
       return baseUrl;
     },

@@ -19,7 +19,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (session?.user?.role) {
       // Already signed in → send them to their role route
-      router.replace(`/${session.user.role.toLowerCase()}`);
+      router.replace(`/roles/${session.user.role.toLowerCase()}`);
     }
   }, [session, router]);
 

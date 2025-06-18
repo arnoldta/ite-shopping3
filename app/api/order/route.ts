@@ -4,6 +4,17 @@ import { PrismaClient, OrderStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// GET /api/order?status=CREATED
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const status = url.searchParams.get("status") as OrderStatus;
+  const orders = await prisma.order.findMany({
+    where: status ? { status } : {},
+    include: { items: true },
+  });
+  return NextResponse.json({ orders });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { buyerName, buyerEmail, deliveryAddress, status, items } = await request.json();
@@ -53,4 +64,16 @@ export async function POST(request: NextRequest) {
     console.error('Order creation error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+// PATCH /api/order  ← updates status
+export async function PATCH(req: NextRequest) {
+  const { id, status } = await req.json();
+  // validate status if you like...
+  const updated = await prisma.order.update({
+    where: { id },
+    data: { status: status as OrderStatus },
+    include: { items: true },
+  });
+  return NextResponse.json({ order: updated });
 }
