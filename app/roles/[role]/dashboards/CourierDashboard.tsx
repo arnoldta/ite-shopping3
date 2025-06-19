@@ -38,9 +38,9 @@ function SignaturePad() {
   const getCoords = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    return { 
-      x: e.clientX - rect.left, 
-      y: e.clientY - rect.top 
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     };
   };
 
@@ -55,6 +55,8 @@ function SignaturePad() {
     ctx.beginPath();
     ctx.moveTo(x, y);
     setDrawing(true);
+    // capture pointer so drawing continues off-element
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -72,6 +74,8 @@ function SignaturePad() {
     e.preventDefault();
     e.stopPropagation();
     setDrawing(false);
+    // release pointer capture
+    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
   const clear = (e: React.MouseEvent) => {
@@ -87,9 +91,10 @@ function SignaturePad() {
     <div className="flex items-center space-x-2">
       <canvas
         ref={canvasRef}
-        width={200}
-        height={100}
-        className="border border-gray-300"
+        width={300}
+        height={150}
+        // prevent touch scrolling so signature works smoothly
+        className="border border-gray-300 touch-none"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -161,57 +166,70 @@ export default function CourierDashboard() {
         <p>No orders in “CUSTOMS_CLEARED” status.</p>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
-            <details
-              key={order.id}
-              className="border rounded-md overflow-hidden"
-            >
-              <summary className="cursor-pointer bg-gray-200 px-4 py-2 flex justify-between items-center">
-                <span>Order #{order.id}</span>
-              </summary>
+          {orders.map((order) => {
+            // calculate GST
+            const subtotal = order.items.reduce(
+              (sum, item) => sum + item.price * item.quantity,
+              0
+            );
+            const gst = subtotal * 0.09;
 
-              <div className="p-4 bg-white space-y-4">
-                <div>
-                  <p>
-                    <strong>Buyer:</strong> {order.buyerName} (
-                    {order.buyerEmail})
-                  </p>
-                  <p>
-                    <strong>Address:</strong> {order.deliveryAddress}
-                  </p>
-                </div>
+            return (
+              <details
+                key={order.id}
+                className="border rounded-md overflow-hidden"
+              >
+                <summary className="cursor-pointer bg-gray-200 px-4 py-2 flex justify-between items-center">
+                  <span>Order #{order.id}</span>
+                </summary>
 
-                <div>
-                  <h4 className="font-semibold mb-2">Items</h4>
-                  <ul className="list-none p-0">
-                    {order.items.map((item) => (
-                      <li
-                        key={item.id}
-                        className="py-2 border-b last:border-b-0"
-                      >
-                        {item.productName} × {item.quantity} @ $
-                        {item.price.toFixed(2)}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <div className="p-4 bg-white space-y-4">
+                  <div>
+                    <p>
+                      <strong>Buyer:</strong> {order.buyerName} (
+                      {order.buyerEmail})
+                    </p>
+                    <p>
+                      <strong>Address:</strong> {order.deliveryAddress}
+                    </p>
+                  </div>
 
-                <div>
-                  <h4 className="font-semibold mb-2">Receiver Signature</h4>
-                  <SignaturePad />
-                </div>
+                  <div>
+                    <h4 className="font-semibold mb-2">Items</h4>
+                    <ul className="list-none p-0">
+                      {order.items.map((item) => (
+                        <li
+                          key={item.id}
+                          className="py-2 border-b last:border-b-0"
+                        >
+                          {item.productName} × {item.quantity} @ $
+                          {item.price.toFixed(2)}
+                        </li>
+                      ))}
+                    </ul>
+                    {/* GST line */}
+                    <p className="mt-2 font-medium">
+                      <strong>GST (9%):</strong> ${gst.toFixed(2)}
+                    </p>
+                  </div>
 
-                <div>
-                  <button
-                    onClick={() => deliverOrder(order.id)}
-                    className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-                  >
-                    Deliver to Address
-                  </button>
+                  <div>
+                    <h4 className="font-semibold mb-2">Receiver Signature</h4>
+                    <SignaturePad />
+                  </div>
+
+                  <div>
+                    <button
+                      onClick={() => deliverOrder(order.id)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                    >
+                      Deliver to Address
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </details>
-          ))}
+              </details>
+            );
+          })}
         </div>
       )}
     </div>
