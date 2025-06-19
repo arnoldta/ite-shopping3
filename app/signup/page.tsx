@@ -4,7 +4,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SignupPage(): JSX.Element {
+export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

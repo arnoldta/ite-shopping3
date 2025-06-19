@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
@@ -38,8 +38,10 @@ export default function LoginPage() {
     if (res?.error) {
       setError("Invalid email or password");
     } else {
-      // NextAuth's `redirect` callback will handle sending them to /{role}
-      router.refresh();
+      const session = await getSession();
+      if (session?.user?.role) {
+        router.push(`/roles/${session.user.role.toLowerCase()}`);
+      }
     }
   };
 

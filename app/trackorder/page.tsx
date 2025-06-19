@@ -21,9 +21,9 @@ const STEPS: Step[] = [
 export default async function TrackOrderPage({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }) {
-  const { id } = searchParams;
+  const { id } = await searchParams;
   if (!id) {
     return <p className="p-6 text-center text-red-600">Order ID is required.</p>;
   }

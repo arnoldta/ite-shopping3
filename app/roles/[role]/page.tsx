@@ -9,13 +9,14 @@ import ReceiverDashboard from "./dashboards/ReceiverDashboard";
 type Role = "picker" | "forwarder" | "shipper" | "courier" | "receiver";
 
 interface PageProps {
-  params: { role: string };
+  params: Promise<{ role: string }>;
 }
 
-export default function RolePage({ params }: PageProps) {
-  const role = params.role.toLowerCase() as Role;
+export default async function RolePage({ params }: PageProps) {
+  const { role } = await params;
+  const roleLower = role.toLowerCase() as Role;
 
-  switch (role) {
+  switch (roleLower) {
     case "picker":
       return <PickerDashboard />;
     case "forwarder":
