@@ -1,4 +1,8 @@
 // app/dashboard/page.tsx
+
+// Force this page to render on every request (no static caching)
+export const dynamic = 'force-dynamic';
+
 import { PrismaClient, OrderStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
