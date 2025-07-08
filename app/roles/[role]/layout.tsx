@@ -34,7 +34,7 @@ export default async function RoleLayout({
     <div className="flex flex-col min-h-screen bg-white">
       {/*<Header email={session.user.email!} />*/}
       <Header />
-      <main className="p-6 text-black">{children}</main>
+      <main className="px-6 pt-6 pb-30 text-black">{children}</main>
     </div>
   );
 }

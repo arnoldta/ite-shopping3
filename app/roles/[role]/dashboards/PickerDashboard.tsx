@@ -1,7 +1,7 @@
 // app/(roles)/picker/PickerDashboard.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Item {
   id: number;
@@ -26,6 +26,9 @@ export default function PickerDashboard() {
   }>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ref to the audio element
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Fetch orders in CREATED status
   const fetchOrders = async () => {
@@ -76,6 +79,8 @@ export default function PickerDashboard() {
     // Check if all items in this order are now picked
     const order = orders.find((o) => o.id === orderId);
     if (order && order.items.every((it) => newOrderState[it.id])) {
+      // play the pick sound (ignore play errors)
+      audioRef.current?.play().catch(() => {});
       alert(`Order #${orderId} is Picked`);
       pickOrder(orderId);
     }
@@ -87,6 +92,9 @@ export default function PickerDashboard() {
 
   return (
     <div>
+      {/* Hidden audio element for the pick sound */}
+      <audio ref={audioRef} src="/pick-sound.mp3" preload="auto" />
+
       <h1 className="text-3xl font-bold mb-4">Picking Station</h1>
 
       {loading ? (
