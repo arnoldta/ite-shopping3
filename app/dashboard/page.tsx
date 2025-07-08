@@ -22,7 +22,7 @@ export default async function DashboardPage() {
   });
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto px-6 pt-6 pb-30 space-y-6">
       <h1 className="text-3xl font-bold">Orders Dashboard</h1>
       <div className="space-y-4">
         {orders.map((order) => {
