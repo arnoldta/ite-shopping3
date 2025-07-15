@@ -19,7 +19,7 @@ export default async function StartSchedulingPage() {
 You are a logistics expert. Given the following delivery addresses in Singapore:
 ${addresses.map((addr, i) => `${i + 1}. ${addr}`).join("\n")}
 
-Generate an optimized delivery route that visits each address exactly once, starting from the first address in the list.  
+Generate an optimized delivery route that visits each address exactly once, starting from a warehouse located in Simei.  
 Return the result as a numbered list of addresses in the order they should be visited.
 `;
 
